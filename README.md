@@ -71,24 +71,23 @@ The following example shows how to initialize the Epson TM-TI88IV
 
 **NOTE**: Always finish the sequence with Epson.cut() otherwise you will endup with weird chars being printed.
 
-
 .. code:: python
 
-    from escpos import *
+    from escposprinter import *
 
-    """ Seiko Epson Corp. Receipt Printer M129 Definitions (EPSON TM-T88IV) """
-    Epson = escpos.Escpos(0x04b8,0x0202,0)
-    Epson.text("Hello World")
-    Epson.image("logo.gif")
-    Epson.barcode
-    Epson.barcode('1324354657687','EAN13',64,2,'','')
+    Epson = printer.Usb(0x04b8,0x0202)
+    Epson.text('Hello World')
     Epson.cut()
+
+
 
 
 or use with statement:
 
 .. code:: python
 
+    from escposprinter import *
+    from escposprinter.escpos import EscposIO
     with EscposIO(printer.Network('192.168.1.87', port=9100)) as p:
         p.set(font='a', codepage='cp1251', size='normal', align='center', bold=True)
         p.printer.set(align='center')
@@ -98,7 +97,6 @@ or use with statement:
         p.writelines(u'BIG TEXT', size='2x')
 
     # After exit of with, printer will cut the paper
-
 5. API
 ------
 

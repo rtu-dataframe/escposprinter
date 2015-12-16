@@ -33,6 +33,7 @@ BARCODE_EAN8    = '\x1d\x6b\x03' # Barcode type EAN8
 BARCODE_CODE39  = '\x1d\x6b\x04' # Barcode type CODE39
 BARCODE_ITF     = '\x1d\x6b\x05' # Barcode type ITF
 BARCODE_NW7     = '\x1d\x6b\x06' # Barcode type NW7
+BARCODE_CENTERED = '\x1b\x61\x01'# Barcode Centered, needs tests
 
 # Image format
 S_RASTER_N      = '\x1d\x76\x30\x00' # Set raster image normal size

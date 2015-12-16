@@ -5,6 +5,11 @@
 @copyright: Copyright (c) 2012 Bashlinux
 @license: GPL
 '''
+from setuptools.compat import unicode
+
+from escposprinter.constants import *
+from escposprinter.exceptions import *
+
 
 try:
     import Image
@@ -204,7 +209,7 @@ class Escpos(object):
     def barcode(self, code, bc, width, height, pos, font):
         """ Print Barcode """
         # Align Bar Code()
-        self._raw(TXT_ALIGN_CT)
+        self._raw(BARCODE_CENTERED)
         # Height
         if height >=2 or height <=6:
             self._raw(BARCODE_HEIGHT)
@@ -250,7 +255,7 @@ class Escpos(object):
         if code:
             self._raw(code)
         else:
-            raise exception.BarcodeCodeError()
+            raise BarcodeCodeError()
 
 
     def text(self, text):
