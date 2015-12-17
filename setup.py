@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name='escposprinter',
-    version='2.3',
+    version='2.5',
     url='https://github.com/Simonefardella/escposprinter',
     download_url='https://github.com/Simonefardella/escposprinter/archive/master.zip',
     description='Python library to manipulate ESC/POS Printers with support for python >= 3',
