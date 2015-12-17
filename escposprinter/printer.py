@@ -128,7 +128,14 @@ class Network(Escpos):
 
     def _raw(self, msg):
         """ Print any command sent in raw format """
-        self.device.send(msg)
+        if (type(msg) is bytes):
+            self.device.send(msg)
+        elif (type(msg) is str):
+            self.device.send(bytes(msg, encoding='utf8'))
+        else:
+            print("Error Type while sending data to printer Raw Socket, unrecognized format!")
+
+
 
 
     def __del__(self):

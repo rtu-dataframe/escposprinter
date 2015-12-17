@@ -5,6 +5,8 @@
 @copyright: Copyright (c) 2012 Bashlinux
 @license: GPL
 '''
+import codecs
+
 from setuptools.compat import unicode
 
 from escposprinter.constants import *
@@ -22,10 +24,11 @@ import time
 
 class EscposIO(object):
     ''' ESC/POS Printer IO object'''
-    def __init__(self, printer, autocut=True, autoclose=True):
+    def __init__(self, printer, autocut=True, autoCutMode="PAPER_FULL_CUT", autoclose=True):
         self.printer = printer
         self.params = {}
         self.autocut = autocut
+        self.autoCutMode = autoCutMode
         self.autoclose = autoclose
 
 
@@ -82,7 +85,10 @@ class EscposIO(object):
     def __exit__(self, type, value, traceback):
         if not (type is not None and issubclass(type, Exception)):
             if self.autocut:
-                self.printer.cut()
+                if self.autoCutMode is "PART":
+                    self.printer.cut(mode="PART")
+                else:
+                    self.printer.cut(mode="")
 
         if self.autoclose:
             self.close()
@@ -115,8 +121,8 @@ class Escpos(object):
         buffer = ""
 
         self._raw(S_RASTER_N)
-        buffer = "%02X%02X%02X%02X" % (((size[0]/size[1])/8), 0, size[1], 0)
-        self._raw(buffer.decode('hex'))
+        buffer = "%02X%02X%02X%02X" % (int(((size[0]/size[1])/8)), 0, size[1], 0)
+        self._raw(codecs.decode(buffer, 'hex'))
         buffer = ""
 
         while i < len(line):
@@ -125,7 +131,7 @@ class Escpos(object):
             i += 8
             cont += 1
             if cont % 4 == 0:
-                self._raw(buffer.decode("hex"))
+                self._raw(codecs.decode(buffer, "hex"))
                 buffer = ""
                 cont = 0
 
@@ -146,9 +152,9 @@ class Escpos(object):
             raise ImageSizeError()
 
         im_border = self._check_image_size(im.size[0])
-        for i in range(im_border[0]):
+        for i in range(int(im_border[0])):
             im_left += "0"
-        for i in range(im_border[1]):
+        for i in range(int(im_border[1])):
             im_right += "0"
 
         for y in range(im.size[1]):
@@ -289,17 +295,20 @@ class Escpos(object):
         :returns:            None
         """
 
-        for key in kwargs.iterkeys():
-            if not TEXT_STYLE.has_key(key):
+        for key in kwargs.keys():
+            if not key in TEXT_STYLE:
+            #if not TEXT_STYLE.has_key(key):
                 raise KeyError('Parameter {0} is wrong.'.format(key))
 
-        for key, value in TEXT_STYLE.iteritems():
-            if kwargs.has_key(key):
+        for key, value in TEXT_STYLE.items():
+            if key in kwargs:
+            #if kwargs.has_key(key):
                 cur = kwargs[key]
                 if isinstance(cur, str) or isinstance(cur, unicode):
                     cur = cur.lower()
 
-                if value.has_key(cur):
+                if cur in value:
+                #if value.has_key(cur):
                     self._raw(value[cur])
                 else:
                     raise AttributeError(
