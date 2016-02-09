@@ -12,7 +12,6 @@ with EscposIO(printer.Network('192.168.1.177', port=9100)) as p:
     #p.printer.image('/Users/simonefardella/Downloads/007.jpeg')
     for i in range(0, 5):
         p.printer.set(align='right')
-        p.writelines('Big line, font b\n', font='b')
         p.printer.set(align='left')
         p.writelines('Left Line, font a', font='a')
     #p.writelines(u'Привет', color=2)
