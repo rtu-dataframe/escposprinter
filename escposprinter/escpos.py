@@ -7,7 +7,10 @@
 '''
 import codecs
 
-from setuptools.compat import unicode
+try:
+    from setuptools.compat import unicode
+except ImportError:
+    from six import text_type as unicode
 
 from escposprinter.constants import *
 from escposprinter.exceptions import *
