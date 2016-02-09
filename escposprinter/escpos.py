@@ -68,7 +68,7 @@ class EscposIO(object):
 
         for line in lines:
             self.printer.set(**params)
-            if isinstance(text, unicode):
+            if isinstance(line, unicode):
                 self.printer.text(u"{0}\n".format(line))
             else:
                 self.printer.text("{0}\n".format(line))
@@ -268,7 +268,7 @@ class Escpos(object):
         """ Print alpha-numeric text """
         if text:
             if self._codepage:
-                self._raw(unicode(text).encode(self._codepage))
+                self._raw(unicode(text).encode(self._codepage, errors='replace'))
             else:
                 self._raw(text)
         else:
