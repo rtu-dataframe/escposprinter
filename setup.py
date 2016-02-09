@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
     name='escposprinter',
-    version='2.5',
+    version='2.6',
     url='https://github.com/Simonefardella/escposprinter',
     download_url='https://github.com/Simonefardella/escposprinter/archive/master.zip',
     description='Python library to manipulate ESC/POS Printers with support for python >= 3',
