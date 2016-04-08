@@ -92,6 +92,7 @@ or use with statement:
         p.printer.set(align='center')
         p.printer.image('logo.gif')
         p.writelines('Big line\n', font='b')
+        p.writelines(u'Привет', color=2)
         p.writelines(u'BIG TEXT', size='2x')
 
     # After exit of with, printer will cut the paper

@@ -70,6 +70,8 @@ with your instance.
 The following example shows how to initialize the Epson TM-TI88IV
 
 **NOTE**: Always finish the sequence with Epson.cut() otherwise you will endup with weird chars being printed.
+
+
 .. code:: python
 
     from escposprinter import *
@@ -92,6 +94,7 @@ or use with statement:
         p.printer.set(align='center')
         p.printer.image('logo.gif')
         p.writelines('Big line\n', font='b')
+        p.writelines(u'Привет', color=2)
         p.writelines(u'BIG TEXT', size='2x')
 
     # After exit of with, printer will cut the paper

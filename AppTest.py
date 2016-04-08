@@ -5,15 +5,12 @@ from escposprinter.escpos import EscposIO
 # Epson.text('Hello World')
 # Epson.cut()
 
+for indexPrinter in range(0, 1):
+    if (indexPrinter == 0):
+        with EscposIO(printer.Network('10.0.0.174', port=9100)) as p:
+            p.set(font='a', codepage='cp1251', size='normal', align='center', bold=True)
+            p.printer.set(align='left')
+            p.printer.image('/Users/simonefardella/PycharmProjects/GTSV5/GTS_WebApp/static/img/rsz_logo_white_compressed_Scontrini.jpg') #Necessariamente in .bmp
 
-with EscposIO(printer.Network('192.168.1.177', port=9100)) as p:
-    p.set(font='a', codepage='cp1251', size='normal', align='center', bold=True)
-    p.printer.set(align='center')
-    #p.printer.image('/Users/simonefardella/Downloads/007.jpeg')
-    for i in range(0, 5):
-        p.printer.set(align='right')
-        p.printer.set(align='left')
-        p.writelines('Left Line, font a', font='a')
-    #p.writelines(u'Привет', color=2)
-        p.printer.set(align='center')
-        p.writelines(u'BIG TEXT, riga di stampa: {0}...'.format(str(i)), size='2x')
+
+
