@@ -70,7 +70,6 @@ with your instance.
 The following example shows how to initialize the Epson TM-TI88IV
 
 **NOTE**: Always finish the sequence with Epson.cut() otherwise you will endup with weird chars being printed.
-
 .. code:: python
 
     from escposprinter import *
@@ -86,17 +85,20 @@ or use with statement:
 
 .. code:: python
 
-    from escposprinter import *
-    from escposprinter.escpos import EscposIO
-    with EscposIO(printer.Network('192.168.1.87', port=9100)) as p:
-        p.set(font='a', codepage='cp1251', size='normal', align='center', bold=True)
-        p.printer.set(align='center')
-        p.printer.image('logo.gif')
-        p.writelines('Big line\n', font='b')
-        p.writelines(u'Привет', color=2)
-        p.writelines(u'BIG TEXT', size='2x')
+        with EscposIO(printer.Network('10.0.0.174', port=9100)) as p:
+            if (p.printer.isAlive()):
+                p.printer.open()
+                p.set(font='a', codepage='cp1251', size='normal', align='center', bold=True)
+                p.printer.set(align='left')
+            else:
+                raise Exception ("Host is unreachable, socket communication was not opened")
 
     # After exit of with, printer will cut the paper
+
+**NOTE**: Starting from 3.3 version of this package, we have introduced the "isAlive" method, which must be used before opening the connection to check if the printer with specified host and port is alive or not.
+
+This method was implemented for both platforms: Linux and Windows
+
 5. API
 ------
 
@@ -105,7 +107,7 @@ or use with statement:
 * Escpos.qr(text, \*args, \*\*kwargs) - Print QR Code for the provided string
 * Escpos.barcode(code, bc, width, height, pos, font) - Print Barcode
 * Escpos.text(text) - Print any text
-* Escpos.set(codepage=None, \*\*kwargs) - kwargs should be:  
+* Escpos.set(codepage=None, \*\*kwargs) - kwargs should be:
     * bold:        set bold font
     * underline:   underline text
     * size:        Text size
@@ -113,7 +115,7 @@ or use with statement:
     * align:       Text position
     * inverted:    White on black text
     * color:       Text color
-    
+
 * Escpos.cut() - Cut the paper
 * Escpos.cashdraw(pin) - Send open cashdraw signal to printer pin.
 * Escpos.control() and Escpos.hw() - Should be use it when you want to do another operations.

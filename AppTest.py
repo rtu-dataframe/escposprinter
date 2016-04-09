@@ -7,7 +7,7 @@ from escposprinter.escpos import EscposIO
 
 for indexPrinter in range(0, 1):
     if (indexPrinter == 0):
-        with EscposIO(printer.Network('localhost', port=9100)) as p:
+        with EscposIO(printer.Network('10.0.0.174', port=9100)) as p:
             if (p.printer.isAlive()):
                 p.printer.open()
                 p.set(font='a', codepage='cp1251', size='normal', align='center', bold=True)

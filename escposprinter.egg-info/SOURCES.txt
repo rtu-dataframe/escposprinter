@@ -1,9 +1,10 @@
-README.rst
+README
 setup.py
 escposprinter/__init__.py
 escposprinter/constants.py
 escposprinter/escpos.py
 escposprinter/exceptions.py
+escposprinter/nc.exe
 escposprinter/printer.py
 escposprinter.egg-info/PKG-INFO
 escposprinter.egg-info/SOURCES.txt
