@@ -5,6 +5,9 @@
 @copyright: Copyright (c) 2012 Bashlinux
 @license: GPL
 '''
+import os
+import subprocess
+from sys import platform
 
 import usb.core
 import usb.util
@@ -115,7 +118,7 @@ class Network(Escpos):
         """
         self.host = host
         self.port = port
-        self.open()
+        #self.open() #The socket opening it's managed manually
 
 
     def open(self):
@@ -128,19 +131,40 @@ class Network(Escpos):
 
     def _raw(self, msg):
         """ Print any command sent in raw format """
-        if (type(msg) is bytes):
-            self.device.send(msg)
-        elif (type(msg) is str):
-            self.device.send(bytes(msg, encoding='utf8'))
-        else:
-            print("Error Type while sending data to printer Raw Socket, unrecognized format!")
+        if self.device is not None:
+            if (type(msg) is bytes):
+                self.device.send(msg)
+            elif (type(msg) is str):
+                self.device.send(bytes(msg, encoding='utf8'))
+            else:
+                print("Error Type while sending data to printer Raw Socket, unrecognized format!")
 
+    def isAlive(self):
+        hostname = self.host
+        response = None
+        if ('darwin' in platform or 'linux2' in platform or 'linux' in platform):
+            response = str(subprocess.Popen("nc -z -w 3 {0} {1}  &> /dev/null && echo 'up' || echo 'down'".format(str(self.host), str(self.port)), stdout=subprocess.PIPE, shell=True).stdout.read().decode('utf-8').strip('\n'))
+        elif ('windows' in platform or 'win32' in platform):  # For Windows-Based Systems
+            #Windows natively doesn't implement netcat, due to that, we are using an external porting of netcat for windows
+            netcatPath = os.path.join(os.path.abspath(__package__), 'nc.exe')
+            response = str(subprocess.Popen("{0} -z -w 3 {0} {1}  > NUL && echo 'up' || echo 'down'".format(str(netcatPath),str(self.host), str(self.port)), stdout=subprocess.PIPE, shell=True).stdout.read().decode('utf-8').strip('\n'))
+        else:
+            raise OSError("Unable to determine System type")
+
+        if (response is not None):
+            if response == 'up':
+                return True
+            else:
+                return False
+        else:
+            raise ValueError("Invalid response Value, it's none, something went really wrong")
 
 
 
     def __del__(self):
         """ Close TCP connection """
-        self.device.close()
+        if (self.device is not None):
+            self.device.close()
 
 
 

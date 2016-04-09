@@ -92,7 +92,6 @@ class EscposIO(object):
                     self.printer.cut(mode="PART")
                 else:
                     self.printer.cut(mode="")
-
         if self.autoclose:
             self.close()
 
