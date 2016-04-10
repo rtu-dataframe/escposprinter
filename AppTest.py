@@ -1,21 +1,29 @@
+import datetime
 from escposprinter import *
-from escposprinter.escpos import EscposIO
+from escposprinter.escpos import EscposIO, Escpos
 
-# Epson = printer.Usb(0x04b8,0x0202)
-# Epson.text('Hello World')
-# Epson.cut()
 
-for indexPrinter in range(0, 1):
-    if (indexPrinter == 0):
-        with EscposIO(printer.Network('10.0.0.174', port=9100)) as p:
-            if (p.printer.isAlive()):
-                p.printer.open()
-                p.set(font='a', codepage='cp1251', size='normal', align='center', bold=True)
-                p.printer.set(align='left')
-                p.printer.image('/Users/simonefardella/PycharmProjects/GTSV5/GTS_WebApp/static/img/rsz_logo_white_compressed_Scontrini.jpg') #image
+printerAddress = '192.168.1.72'
+printerPort = 9100
 
-            else:
-                raise Exception ("Host is unreachable, socket communication was not opened")
+def checkPrinterAlive():
+    if (printer.Network.isAlive(printerAddress, printerPort)):
+        return True
+    else:
+        raise Exception ("Host is unreachable, socket communication was not opened")
+
+if (checkPrinterAlive()):
+    string = str("String: " + str(datetime.datetime.now().microsecond))
+    with EscposIO(printer.Network(printerAddress, printerPort)) as p:
+        p.set(font='a', codepage='cp1251', size='normal', align='center', bold=True)
+        p.writelines('')
+        p.writelines('')
+        p.writelines('')
+        p.writelines("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam facilisis congue sodales. Nullam pharetra diam vel tempus facilisis.")
+        p.writelines('')
+        p.writelines('')
+        p.writelines('')
+
 
 
 

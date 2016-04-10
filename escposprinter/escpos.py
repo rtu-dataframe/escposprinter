@@ -104,7 +104,7 @@ class Escpos(object):
     stored_args = {}
 
 
-    def _check_image_size(self, size):
+    def _check_image_size(size):
         """ Check and fix the size of the image to 32 bits """
         if size % 32 == 0:
             return (0, 0)
@@ -137,8 +137,14 @@ class Escpos(object):
                 buffer = ""
                 cont = 0
 
-
     def _convert_image(self, im):
+        """ Parse image and prepare it to a printable format """
+        dictionaryImageConverted = Escpos._convert_image_to_printer_format(im)
+        self._print_image(dictionaryImageConverted['lines'], dictionaryImageConverted['imageSize'])
+
+
+    def _convert_image_to_printer_format(im):
+
         """ Parse image and prepare it to a printable format """
         pixels   = []
         pix_line = ""
@@ -153,7 +159,7 @@ class Escpos(object):
         if im.size[1] > 255:
             raise ImageSizeError()
 
-        im_border = self._check_image_size(im.size[0])
+        im_border = Escpos._check_image_size(im.size[0])
         for i in range(int(im_border[0])):
             im_left += "0"
         for i in range(int(im_border[1])):
@@ -183,8 +189,7 @@ class Escpos(object):
             pix_line += im_right
             img_size[0] += im_border[1]
 
-        self._print_image(pix_line, img_size)
-
+        return({'lines': pix_line, 'imageSize' : img_size})
 
     def image(self,path_img):
         """ Open image file """

@@ -7,7 +7,9 @@
 '''
 import os
 import subprocess
+from queue import Queue
 from sys import platform
+from time import sleep
 
 import usb.core
 import usb.util
@@ -111,6 +113,9 @@ class Serial(Escpos):
 class Network(Escpos):
     """ Define Network printer """
 
+    printerQueue = Queue()
+
+
     def __init__(self,host,port=9100):
         """
         @param host : Printer's hostname or IP address
@@ -118,36 +123,17 @@ class Network(Escpos):
         """
         self.host = host
         self.port = port
-        #self.open() #The socket opening it's managed manually
+        self.open()
 
-
-    def open(self):
-        """ Open TCP socket and set it as escpos device """
-        self.device = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.device.connect((self.host, self.port))
-
-        if self.device is None:
-            print ("Could not open socket for %s" % self.host)
-
-    def _raw(self, msg):
-        """ Print any command sent in raw format """
-        if self.device is not None:
-            if (type(msg) is bytes):
-                self.device.send(msg)
-            elif (type(msg) is str):
-                self.device.send(bytes(msg, encoding='utf8'))
-            else:
-                print("Error Type while sending data to printer Raw Socket, unrecognized format!")
-
-    def isAlive(self):
-        hostname = self.host
+    #Static method to check if the printer is alive and reachable to the given hostname and port
+    def isAlive(host, port):
         response = None
         if ('darwin' in platform or 'linux2' in platform or 'linux' in platform):
-            response = str(subprocess.Popen("nc -z -w 3 {0} {1}  &> /dev/null && echo 'up' || echo 'down'".format(str(self.host), str(self.port)), stdout=subprocess.PIPE, shell=True).stdout.read().decode('utf-8').strip('\n'))
+            response = str(subprocess.Popen("nc -z -w 1 {0} {1}  &> /dev/null && echo 'up' || echo 'down'".format(str(host), str(port)), stdout=subprocess.PIPE, shell=True).stdout.read(), 'utf-8').strip()
         elif ('windows' in platform or 'win32' in platform):  # For Windows-Based Systems
             #Windows natively doesn't implement netcat, due to that, we are using an external porting of netcat for windows
             netcatPath = os.path.join(os.path.abspath(__package__), 'nc.exe')
-            response = str(subprocess.Popen("{0} -z -w 3 {0} {1}  > NUL && echo 'up' || echo 'down'".format(str(netcatPath),str(self.host), str(self.port)), stdout=subprocess.PIPE, shell=True).stdout.read().decode('utf-8').strip('\n'))
+            response = str(subprocess.Popen("{0} -z -w 1 {1} {2}  > NUL && echo up || echo down".format(str(netcatPath),str(host), str(port)), stdout=subprocess.PIPE, shell=True).stdout.read(), 'utf-8').strip()
         else:
             raise OSError("Unable to determine System type")
 
@@ -159,12 +145,48 @@ class Network(Escpos):
         else:
             raise ValueError("Invalid response Value, it's none, something went really wrong")
 
+    def open(self):
+        """ Open TCP socket and set it as escpos device """
+        self.device = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.device.connect((self.host, self.port))
 
+        if self.device is None:
+            print ("Could not open socket for %s" % self.host)
+
+    def _raw(self, msg):
+        """ Print any command sent in raw format """
+        if self.printerQueue is not None:
+            if (type(msg) is bytes):
+                self.printerQueue.put(msg)
+            elif (type(msg) is str):
+                self.printerQueue.put(bytes(msg, encoding='utf8'))
+
+
+
+            while not self.printerQueue.empty():
+                queueElementToPrint = self.printerQueue.get()
+                if self.device is not None:
+                    if (type(queueElementToPrint) is bytes):
+                        self.device.send(queueElementToPrint)
+                    elif (type(queueElementToPrint) is str):
+                        self.device.send(bytes(queueElementToPrint, encoding='utf8'))
+                    else:
+                        print("Error Type while sending data to printer Raw Socket, unrecognized format!")
+
+
+        else:
+            raise Exception("Printer Queue is None, something went really wrong with the class istance")
+
+    def do_stuff(self, q):
+        pass
 
     def __del__(self):
         """ Close TCP connection """
         if (self.device is not None):
             self.device.close()
+
+
+
 
 
 
