@@ -113,7 +113,7 @@ or use with statement:
 
     # After exit of with, printer will cut the paper
 
-
+**NOTE**: Starting from 3.3 version of this package, we have introduced the "isAlive" method, which must be used before opening the connection to check if the printer with specified host and port is alive or not.
 
 This method was implemented for both platforms: Linux and Windows
 
