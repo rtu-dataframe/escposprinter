@@ -7,7 +7,7 @@
 '''
 import os
 import subprocess
-from queue import Queue
+from six.moves import queue
 from sys import platform
 from time import sleep
 
@@ -113,7 +113,7 @@ class Serial(Escpos):
 class Network(Escpos):
     """ Define Network printer """
 
-    printerQueue = Queue()
+    printerQueue = queue.Queue()
 
 
     def __init__(self,host,port=9100):
