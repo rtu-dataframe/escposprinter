@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: escposprinter
-Version: 3.8
+Version: 3.9
 Summary: Python library to manipulate ESC/POS Printers with support for python >= 3
 Home-page: https://github.com/Simonefardella/escposprinter
 Author: ['Simone Fardella']
@@ -94,17 +94,35 @@ Description: ESCPOS
         
         .. code:: python
         
-                with EscposIO(printer.Network('10.0.0.174', port=9100)) as p:
-                    if (p.printer.isAlive()):
-                        p.printer.open()
-                        p.set(font='a', codepage='cp1251', size='normal', align='center', bold=True)
-                        p.printer.set(align='left')
+                import datetime
+                from escposprinter import *
+                from escposprinter.escpos import EscposIO, Escpos
+        
+        
+                printerAddress = '192.168.1.72'
+                printerPort = 9100
+        
+                def checkPrinterAlive():
+                    if (printer.Network.isAlive(printerAddress, printerPort)):
+                        return True
                     else:
                         raise Exception ("Host is unreachable, socket communication was not opened")
         
+                if (checkPrinterAlive()):
+                    string = str("String: " + str(datetime.datetime.now().microsecond))
+                    with EscposIO(printer.Network(printerAddress, printerPort)) as p:
+                        p.set(font='a', codepage='cp1251', size='normal', align='center', bold=True)
+                        p.writelines('')
+                        p.writelines('')
+                        p.writelines('')
+                        p.writelines("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam facilisis congue sodales. Nullam pharetra diam vel tempus facilisis.")
+                        p.writelines('')
+                        p.writelines('')
+                        p.writelines('')
+        
             # After exit of with, printer will cut the paper
         
-        **NOTE**: Starting from 3.3 version of this package, we have introduced the "isAlive" method, which must be used before opening the connection to check if the printer with specified host and port is alive or not.
+        
         
         This method was implemented for both platforms: Linux and Windows
         
