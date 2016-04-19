@@ -156,12 +156,12 @@ class Network(Escpos):
         if PrinterQueue.printerQueue is None:
             PrinterQueue.printerQueue = queue.Queue()
 
-            if (type(msg) is bytes):
-                PrinterQueue.printerQueue.put(msg)
-            elif (type(msg) is str):
-                PrinterQueue.printerQueue.put(bytes(msg, encoding='utf8'))
+        if (type(msg) is bytes):
+            PrinterQueue.printerQueue.put(msg)
+        elif (type(msg) is str):
+            PrinterQueue.printerQueue.put(bytes(msg, encoding='utf8'))
 
-            self.flushPrinterQueue()
+        self.flushPrinterQueue()
 
 
     def flushPrinterQueue(self):
@@ -169,9 +169,9 @@ class Network(Escpos):
             queueElementToPrint = PrinterQueue.printerQueue.get()
             if self.device is not None:
                 if (type(queueElementToPrint) is bytes):
-                    self.device.sendall(queueElementToPrint)
+                    self.device.send(queueElementToPrint)
                 elif (type(queueElementToPrint) is str):
-                    self.device.sendall(bytes(queueElementToPrint, encoding='utf8'))
+                    self.device.send(bytes(queueElementToPrint, encoding='utf8'))
                 else:
                     print("Error Type while sending data to printer Raw Socket, unrecognized format!")
 
@@ -213,4 +213,5 @@ class File(Escpos):
     def __del__(self):
         """ Close system file """
         self.device.close()
+
 
