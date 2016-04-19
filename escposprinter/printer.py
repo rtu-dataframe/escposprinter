@@ -108,11 +108,9 @@ class Serial(Escpos):
         if self.device is not None:
             self.device.close()
 
-class PrinterQueue():
-    printerQueue = queue.Queue()
-
 class Network(Escpos):
     """ Define Network printer """
+    printerQueue = queue.Queue()
 
     def __init__(self,host,port=9100):
         """
@@ -153,19 +151,19 @@ class Network(Escpos):
 
     def _raw(self, msg):
         """ Print any command sent in raw format """
-        if PrinterQueue.printerQueue is not None:
+        if self.printerQueue is not None:
             if (type(msg) is bytes):
-                PrinterQueue.printerQueue.put(msg)
+                self.printerQueue.put(msg)
             elif (type(msg) is str):
-                PrinterQueue.printerQueue.put(bytes(msg, encoding='utf8'))
+                self.printerQueue.put(bytes(msg, encoding='utf8'))
 
             self.flushPrinterQueue()
         else:
             raise Exception("Printer Queue is None, something went really wrong with the class istance")
 
     def flushPrinterQueue(self):
-        while not PrinterQueue.printerQueue.empty():
-            queueElementToPrint = PrinterQueue.printerQueue.get()
+        while not self.printerQueue.empty():
+            queueElementToPrint = self.printerQueue.get()
             if self.device is not None:
                 if (type(queueElementToPrint) is bytes):
                     self.device.sendall(queueElementToPrint)
