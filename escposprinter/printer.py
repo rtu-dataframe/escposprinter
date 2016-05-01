@@ -178,8 +178,7 @@ class Network(Escpos):
 
     def __del__(self):
         """ Close TCP connection """
-        if (self.device is not None):
-            self.device.close()
+        self.device.close()
 
 
 
