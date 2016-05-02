@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: escposprinter
-Version: 4.7
+Version: 4.8
 Summary: Python library to manipulate ESC/POS Printers with support for python >= 3
 Home-page: https://github.com/Simonefardella/escposprinter
 Author: ['Simone Fardella']

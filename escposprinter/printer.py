@@ -107,13 +107,14 @@ class Serial(Escpos):
 
 class Network(Escpos):
     """ Define Network printer """
-    connectionRetryCount = 0
+
 
     def __init__(self,host,port=9100):
         """
         @param host : Printer's hostname or IP address
         @param port : Port to write to
         """
+        self.connectionRetryCount = 0
         self.host = host
         self.port = port
         self.open()
