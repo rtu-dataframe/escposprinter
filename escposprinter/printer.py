@@ -12,6 +12,7 @@ import usb.core
 import usb.util
 import serial
 import socket
+import errno
 
 
 from escposprinter.escpos import Escpos, EscposIO
@@ -149,19 +150,16 @@ class Network(Escpos):
 
     def _raw(self, msg):
         """ Print any command sent in raw format """
-        self.checkSocketOpened()
+        try:
 
-        if (type(msg) is bytes):
-            self.device.send(msg)
-        elif (type(msg) is str):
-            self.device.send(bytes(msg, encoding='utf8'))
-        else:
-            print("Error Type while sending data to printer Raw Socket, unrecognized format!")
+            if (type(msg) is bytes):
+                self.device.send(msg)
+            elif (type(msg) is str):
+                self.device.send(bytes(msg, encoding='utf8'))
+            else:
+                print("Error Type while sending data to printer Raw Socket, unrecognized format!")
 
-
-    def checkSocketOpened(self):
-        data = self.device.recv(16) #Simple byte get from device
-        if len(data) == 0: #Socket is already closed
+        except socket.error as e:
             if (self.connectionRetryCount < 16):
                 self.connectionRetryCount += 1
                 if (self.connectionRetryCount > 10):
@@ -169,6 +167,7 @@ class Network(Escpos):
                 else:
                     sleep(3)
                 self.open()
+                self._raw(msg)
             else:
                 raise Exception("Socket prematurely closed. Tried for 1 minute to contact client, no Response")
 
