@@ -1,13 +1,10 @@
 #!/usr/bin/python
 '''
-@author: Manuel F Martinez <manpaz@bashlinux.com>
-@organization: Bashlinux
-@copyright: Copyright (c) 2012 Bashlinux
+@author: Simone Fardella <fardella93@gmail.com>
 @license: GPL
 '''
 import os
 import subprocess
-from six.moves import queue
 from sys import platform
 from time import sleep
 
@@ -108,11 +105,9 @@ class Serial(Escpos):
         if self.device is not None:
             self.device.close()
 
-class PrinterQueue():
-    printerQueue = None
-
 class Network(Escpos):
     """ Define Network printer """
+    connectionRetryCount = 0
 
     def __init__(self,host,port=9100):
         """
@@ -153,32 +148,33 @@ class Network(Escpos):
 
     def _raw(self, msg):
         """ Print any command sent in raw format """
-        if PrinterQueue.printerQueue is None:
-            PrinterQueue.printerQueue = queue.Queue()
+        self.checkSocketOpened()
 
         if (type(msg) is bytes):
-            PrinterQueue.printerQueue.put(msg)
+            self.device.send(msg)
         elif (type(msg) is str):
-            PrinterQueue.printerQueue.put(bytes(msg, encoding='utf8'))
+            self.device.send(bytes(msg, encoding='utf8'))
+        else:
+            print("Error Type while sending data to printer Raw Socket, unrecognized format!")
 
-        self.flushPrinterQueue()
 
-
-    def flushPrinterQueue(self):
-        while not PrinterQueue.printerQueue.empty():
-            queueElementToPrint = PrinterQueue.printerQueue.get()
-            if self.device is not None:
-                if (type(queueElementToPrint) is bytes):
-                    self.device.send(queueElementToPrint)
-                elif (type(queueElementToPrint) is str):
-                    self.device.send(bytes(queueElementToPrint, encoding='utf8'))
+    def checkSocketOpened(self):
+        data = self.device.recv(16) #Simple byte get from device
+        if len(data) == 0: #Socket is already closed
+            if (self.connectionRetryCount < 16):
+                self.connectionRetryCount += 1
+                if (self.connectionRetryCount > 10):
+                    sleep(5)
                 else:
-                    print("Error Type while sending data to printer Raw Socket, unrecognized format!")
-
+                    sleep(3)
+                self.open()
+            else:
+                raise Exception("Socket prematurely closed. Tried for 1 minute to contact client, no Response")
 
     def __del__(self):
         """ Close TCP connection """
-        self.device.close()
+        if self.device is not None:
+            self.device.close()
 
 
 

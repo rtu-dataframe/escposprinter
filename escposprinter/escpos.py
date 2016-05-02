@@ -1,8 +1,6 @@
 #!/usr/bin/python
 '''
-@author: Manuel F Martinez <manpaz@bashlinux.com>
-@organization: Bashlinux
-@copyright: Copyright (c) 2012 Bashlinux
+@author: Simone Fardella <fardella93@gmail.com>
 @license: GPL
 '''
 import codecs
