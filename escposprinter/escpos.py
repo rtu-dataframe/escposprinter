@@ -75,6 +75,8 @@ class EscposIO(object):
                 self.printer.text("{0}\n".format(line))
 
 
+
+
     def close(self):
         self.printer.close()
 
@@ -196,6 +198,11 @@ class Escpos(object):
         # Convert the RGB image in printable image
         self._convert_image(im)
 
+    def nvRamImage(self, imageMemorySlot='01', imagePrintOptions=NVRAM_IMAGE_STYLE.normal):
+        nvRamImagePrintCommand = r'\x1C\x70\x{0}{1}'.format(str(imageMemorySlot), str(imagePrintOptions.value)) #ESCPOS = FS p n m, note that imageMemorySlot must be double digit slot
+        nvRamImagePrintCommand = codecs.decode(nvRamImagePrintCommand, 'unicode_escape') #remove escape sequencies from string
+        nvRamImagePrintCommand = str.encode(nvRamImagePrintCommand) #encode to bytes
+        self._raw(nvRamImagePrintCommand) #send to printer
 
     def qr(self, text, *args, **kwargs):
         """ Print QR Code for the provided string """

@@ -86,11 +86,13 @@ or use with statement:
 .. code:: python
 
         import datetime
+
+
         from escposprinter import *
         from escposprinter.escpos import EscposIO, Escpos
 
 
-        printerAddress = '192.168.1.72'
+        printerAddress = '192.168.0.196'
         printerPort = 9100
 
         def checkPrinterAlive():
@@ -101,15 +103,17 @@ or use with statement:
 
         if (checkPrinterAlive()):
             string = str("String: " + str(datetime.datetime.now().microsecond))
-            with EscposIO(printer.Network(printerAddress, printerPort)) as p:
-                p.set(font='a', codepage='cp1251', size='normal', align='center', bold=True)
-                p.writelines('')
-                p.writelines('')
-                p.writelines('')
-                p.writelines("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam facilisis congue sodales. Nullam pharetra diam vel tempus facilisis.")
-                p.writelines('')
-                p.writelines('')
-                p.writelines('')
+            for iteration in range(30):
+                with EscposIO(printer.Network(printerAddress, printerPort)) as p:
+                    p.set(font='a', codepage='cp1251', size='normal', align='center', bold=True)
+                    p.writelines('LOGO')
+                    p.printer.nvRamImage()
+                    #p.printer.image('IMAGE PATH')
+                    p.writelines('')
+                    p.writelines('')
+                    p.writelines('')
+                    p.writelines('')
+
 
     # After exit of with, printer will cut the paper
 
@@ -122,6 +126,7 @@ This method was implemented for both platforms: Linux and Windows
 
 * Escpos() - main class
 * Escpos.image(path_img) - Open image file
+* Escpos.nvRamImage() - Prints a previously downloaded (by third party specific tools) images from NVRAM (It allows to select the image to print and set the print image width options), by defaults it prints the first image in memory with the original dimensions
 * Escpos.qr(text, \*args, \*\*kwargs) - Print QR Code for the provided string
 * Escpos.barcode(code, bc, width, height, pos, font) - Print Barcode
 * Escpos.text(text) - Print any text

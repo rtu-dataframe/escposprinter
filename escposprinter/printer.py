@@ -13,6 +13,8 @@ import usb.util
 import serial
 import socket
 import errno
+import binascii
+
 
 
 from escposprinter.escpos import Escpos, EscposIO

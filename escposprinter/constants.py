@@ -1,5 +1,4 @@
 """ ESC/POS Commands (Constants) """
-
 # Feed control sequences
 CTL_LF    = '\x0a'             # Print and line feed
 CTL_FF    = '\x0c'             # Form feed
@@ -78,6 +77,14 @@ TEXT_STYLE = {
         2: '\x1b\x72\x00',          # Select 2nd printing color
     }
 }
+from enum import Enum
+class NVRAM_IMAGE_STYLE(Enum):
+    normal = '\x00'   # Normal image
+    doubleHeight = '\x01'       # Double height image
+    doubleWidth = '\x02'       # Double width image
+    doubleDimensions = '\x03'  # Quad area image
+
+
 
 PAGE_CP_SET_COMMAND = '\x1b\x74'
 PAGE_CP_CODE = {
