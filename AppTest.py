@@ -9,10 +9,7 @@ printerAddress = '192.168.0.196'
 printerPort = 9100
 
 def checkPrinterAlive():
-    if (printer.Network.isAlive(printerAddress, printerPort)):
-        return True
-    else:
-        raise Exception ("Host is unreachable, socket communication was not opened")
+    return True
 
 if (checkPrinterAlive()):
     string = str("String: " + str(datetime.datetime.now().microsecond))

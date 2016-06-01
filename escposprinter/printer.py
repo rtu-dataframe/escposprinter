@@ -153,12 +153,9 @@ class Network(Escpos):
                 print ("Could not open socket for %s" % self.host)
 
        except Exception as ex:
-        if (self.connectionRetryCount < 16):
+        if (self.connectionRetryCount < 60):
             self.connectionRetryCount += 1
-            if (self.connectionRetryCount > 10):
-                sleep(5)
-            else:
-                sleep(3)
+            sleep(1)
             self.open()
         else:
             raise Exception("Tried for 1 minute to contact client, no Response, exception: {0}".format(repr(ex)))
@@ -176,12 +173,9 @@ class Network(Escpos):
                 print("Error Type while sending data to printer Raw Socket, unrecognized format!")
 
         except socket.error as ex:
-            if (self.socketRetryCount < 16):
+            if (self.socketRetryCount < 60):
                 self.socketRetryCount += 1
-                if (self.socketRetryCount > 10):
-                    sleep(5)
-                else:
-                    sleep(3)
+                sleep(1)
                 self.open()
                 self._raw(msg)
             else:
