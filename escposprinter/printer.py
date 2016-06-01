@@ -155,6 +155,7 @@ class Network(Escpos):
        except Exception as ex:
         if (self.connectionRetryCount < 60):
             self.connectionRetryCount += 1
+            self.__del__()
             sleep(1)
             self.open()
         else:
@@ -175,6 +176,7 @@ class Network(Escpos):
         except socket.error as ex:
             if (self.socketRetryCount < 60):
                 self.socketRetryCount += 1
+                self.__del__()
                 sleep(1)
                 self.open()
                 self._raw(msg)
@@ -184,6 +186,7 @@ class Network(Escpos):
     def __del__(self):
         """ Close TCP connection """
         if self.device is not None:
+            self.device.shutdown(socket.SHUT_RDWR)
             self.device.close()
 
 
