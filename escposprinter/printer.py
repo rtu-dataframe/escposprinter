@@ -103,7 +103,6 @@ class Serial(Escpos):
 
     def __del__(self):
         """ Close Serial interface """
-        self._raw(RESET)
         self.device.close()
 
 class Network(Escpos):
@@ -156,7 +155,6 @@ class Network(Escpos):
         if (self.connectionRetryCount < 30):
             self.connectionRetryCount += 1
             self.open()
-            self._raw(RESET)
         else:
             raise Exception("No Response from device, exception: {0}".format(repr(ex)))
 
@@ -176,14 +174,12 @@ class Network(Escpos):
             if (self.socketRetryCount < 30):
                 self.socketRetryCount += 1
                 self.open()
-                self._raw(RESET)
                 self._raw(msg)
             else:
                 raise Exception("Socket prematurely closed. No Response Exception: {0}".format(repr(ex)))
 
     def __del__(self):
         """ Close TCP connection """
-        self._raw(RESET)
         self.device.close()
 
 
@@ -217,7 +213,6 @@ class File(Escpos):
 
     def __del__(self):
         """ Close system file """
-        self._raw(RESET)
         self.device.close()
 
 
