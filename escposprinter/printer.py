@@ -6,7 +6,6 @@
 import os
 import subprocess
 from sys import platform
-from time import sleep
 
 import usb.core
 import usb.util
@@ -154,13 +153,12 @@ class Network(Escpos):
                 print ("Could not open socket for %s" % self.host)
 
        except Exception as ex:
-        if (self.connectionRetryCount < 60):
+        if (self.connectionRetryCount < 30):
             self.connectionRetryCount += 1
-            sleep(1)
             self.open()
             self._raw(RESET)
         else:
-            raise Exception("Tried for 1 minute to contact client, no Response, exception: {0}".format(repr(ex)))
+            raise Exception("No Response from device, exception: {0}".format(repr(ex)))
 
 
     def _raw(self, msg):
@@ -175,14 +173,13 @@ class Network(Escpos):
                 print("Error Type while sending data to printer Raw Socket, unrecognized format!")
 
         except socket.error as ex:
-            if (self.socketRetryCount < 60):
+            if (self.socketRetryCount < 30):
                 self.socketRetryCount += 1
-                sleep(1)
                 self.open()
                 self._raw(RESET)
                 self._raw(msg)
             else:
-                raise Exception("Socket prematurely closed. Tried for 1 minute to contact client, no Response Exception: {0}".format(repr(ex)))
+                raise Exception("Socket prematurely closed. No Response Exception: {0}".format(repr(ex)))
 
     def __del__(self):
         """ Close TCP connection """
