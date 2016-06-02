@@ -15,8 +15,7 @@ import socket
 import errno
 import binascii
 
-
-
+from escposprinter.constants import *
 from escposprinter.escpos import Escpos, EscposIO
 
 
@@ -105,8 +104,8 @@ class Serial(Escpos):
 
     def __del__(self):
         """ Close Serial interface """
-        if self.device is not None:
-            self.device.close()
+        self._raw(RESET)
+        self.device.close()
 
 class Network(Escpos):
     """ Define Network printer """
@@ -147,7 +146,9 @@ class Network(Escpos):
        try:
             """ Open TCP socket and set it as escpos device """
             self.device = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            #self.device.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
             self.device.connect((self.host, self.port))
+            #self.device.setblocking(1)
 
             if self.device is None:
                 print ("Could not open socket for %s" % self.host)
@@ -155,9 +156,9 @@ class Network(Escpos):
        except Exception as ex:
         if (self.connectionRetryCount < 60):
             self.connectionRetryCount += 1
-            self.__del__()
             sleep(1)
             self.open()
+            self._raw(RESET)
         else:
             raise Exception("Tried for 1 minute to contact client, no Response, exception: {0}".format(repr(ex)))
 
@@ -176,15 +177,16 @@ class Network(Escpos):
         except socket.error as ex:
             if (self.socketRetryCount < 60):
                 self.socketRetryCount += 1
-                self.__del__()
                 sleep(1)
                 self.open()
+                self._raw(RESET)
                 self._raw(msg)
             else:
                 raise Exception("Socket prematurely closed. Tried for 1 minute to contact client, no Response Exception: {0}".format(repr(ex)))
 
     def __del__(self):
         """ Close TCP connection """
+        self._raw(RESET)
         self.device.close()
 
 
@@ -218,6 +220,7 @@ class File(Escpos):
 
     def __del__(self):
         """ Close system file """
+        self._raw(RESET)
         self.device.close()
 
 

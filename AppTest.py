@@ -1,9 +1,7 @@
 import datetime
 
-
 from escposprinter import *
 from escposprinter.escpos import EscposIO, Escpos
-
 
 printerAddress = '192.168.0.197'
 printerPort = 9100
