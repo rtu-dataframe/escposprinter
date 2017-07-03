@@ -8,14 +8,14 @@ except ImportError:
 
 setup(
     name='escposprinter',
-    version='5.8',
+    version='5.9',
     url='https://github.com/Simonefardella/escposprinter',
     download_url='https://github.com/Simonefardella/escposprinter/archive/master.zip',
     description='Python library to manipulate ESC/POS Printers with support for python >= 3',
     long_description=open('README').read(),
     license='LGPL',
     author=['Simone Fardella'],
-    author_email=['fardella93@gmail.com'],
+    author_email='fardella93@gmail.com',
     platforms=['linux'],
     packages=[
         'escposprinter',

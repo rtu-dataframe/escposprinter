@@ -3,7 +3,7 @@ import datetime
 from escposprinter import *
 from escposprinter.escpos import EscposIO, Escpos
 
-printerAddress = '192.168.0.197'
+printerAddress = '192.168.17.187'
 printerPort = 9100
 
 string = str("String: " + str(datetime.datetime.now().microsecond))
