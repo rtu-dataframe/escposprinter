@@ -156,8 +156,8 @@ class Network(Escpos):
 			if self.device is None:
 				print ("Could not open socket for %s" % self.host)
 
-		except Exception as ex:
-			raise Exception("Printer exception: {0}".format(ex))
+		except socket.error as ex:
+			raise socket.error("Printer socket error: {0}".format(ex))
 
 
 	def _raw(self, msg):
@@ -172,7 +172,7 @@ class Network(Escpos):
 				print("Error Type while sending data to printer Raw Socket, unrecognized format!")
 
 		except socket.error as ex:
-			raise Exception("Printer exception: {0}".format(ex))
+			raise socket.error("Printer socket error: {0}".format(ex))
 
 	def __del__(self):
 		""" Close TCP connection """
