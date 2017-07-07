@@ -151,14 +151,13 @@ class Network(Escpos):
 			self.device = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			#self.device.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 0)
 			self.device.connect((self.host, self.port))
-			self.device.settimeout(10)
+			self.device.settimeout(5)
 			#self.device.setblocking(1)
 
 			if self.device is None:
 				print ("Could not open socket for %s" % self.host)
 
 		except socket.error as ex:
-			self.device.close()
 			raise socket.error("Printer socket error: {0}".format(ex))
 
 
@@ -174,7 +173,6 @@ class Network(Escpos):
 				print("Error Type while sending data to printer Raw Socket, unrecognized format!")
 
 		except socket.error as ex:
-			self.device.close()
 			raise socket.error("Printer socket error: {0}".format(ex))
 
 	def __del__(self):
